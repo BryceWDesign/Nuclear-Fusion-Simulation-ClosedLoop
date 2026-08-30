@@ -1,0 +1,20 @@
+{
+  "n_cells": 32,
+  "dt_s": 0.001,
+  "duration_s": 0.2,
+  "initial": {
+    "core_total_fuel_density_m3": 5e19,
+    "edge_total_fuel_density_m3": 1e19,
+    "tritium_fraction": 0.5,
+    "core_ion_temperature_keV": 0.3,
+    "edge_ion_temperature_keV": 0.2,
+    "core_electron_temperature_keV": 0.3,
+    "edge_electron_temperature_keV": 0.2,
+    "profile_exponent": 1.5
+  },
+  "heating": {
+    "external_heating_MW": 0.0,
+    "electron_fraction": 0.5,
+    "deposition_width_rho": 0.55
+  }
+}

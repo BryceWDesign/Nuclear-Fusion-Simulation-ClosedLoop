@@ -1,0 +1,45 @@
+{
+  "coarse": {
+    "Q_plasma": 3.2713070812223246,
+    "fusion_power_MW": 163.56535406111624,
+    "tau_E_s": 6.417797826331695,
+    "volume_avg_Te_keV": 10.365257552707583,
+    "volume_avg_Ti_keV": 10.494563121050296
+  },
+  "relative_differences": {
+    "Q_plasma": {
+      "spatial": 0.00855114773015253,
+      "temporal": 0.0003458922298940173
+    },
+    "fusion_power_MW": {
+      "spatial": 0.008551147730152444,
+      "temporal": 0.00034589222989401186
+    },
+    "tau_E_s": {
+      "spatial": 0.07652859102927004,
+      "temporal": 0.0002335075450596605
+    },
+    "volume_avg_Te_keV": {
+      "spatial": 0.024253611363470623,
+      "temporal": 7.76458719917025e-05
+    },
+    "volume_avg_Ti_keV": {
+      "spatial": 0.02272989045737336,
+      "temporal": 4.7849216841953934e-05
+    }
+  },
+  "spatial_refined": {
+    "Q_plasma": 3.300663453238773,
+    "fusion_power_MW": 165.03317266193864,
+    "tau_E_s": 6.948021519440401,
+    "volume_avg_Te_keV": 10.622076447271686,
+    "volume_avg_Ti_keV": 10.738137657085607
+  },
+  "temporal_refined": {
+    "Q_plasma": 3.2724389924426127,
+    "fusion_power_MW": 163.62194962213064,
+    "tau_E_s": 6.416299222116579,
+    "volume_avg_Te_keV": 10.364452733246484,
+    "volume_avg_Ti_keV": 10.494060964423856
+  }
+}

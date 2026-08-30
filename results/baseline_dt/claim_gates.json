@@ -1,0 +1,39 @@
+{
+  "burning_plasma_screen_allowed": false,
+  "causal_fusion_result_allowed": true,
+  "experimental_validation_claim_allowed": false,
+  "gates": [
+    {
+      "detail": "relative residual=5.876e-16, limit=2.000e-06",
+      "name": "energy_conservation",
+      "passed": true
+    },
+    {
+      "detail": "relative residual=1.904e-16, limit=2.000e-10",
+      "name": "particle_conservation",
+      "passed": true
+    },
+    {
+      "detail": "Q uses D-T reaction power divided by declared external plasma heating",
+      "name": "q_causal_chain",
+      "passed": true
+    },
+    {
+      "detail": "alpha heating fraction=0.3039",
+      "name": "alpha_self_heating_screen",
+      "passed": false
+    },
+    {
+      "detail": "net-electric is only emitted when all declared recirculating loads are supplied",
+      "name": "plant_closure",
+      "passed": false
+    },
+    {
+      "detail": "no experimental tokamak validation is bundled with this repository",
+      "name": "experimental_validation",
+      "passed": false
+    }
+  ],
+  "highest_authority": "VERIFIED_REDUCED_BURN_TRANSPORT_SCREEN",
+  "net_electric_statement_allowed": false
+}

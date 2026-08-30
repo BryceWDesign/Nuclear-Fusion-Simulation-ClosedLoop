@@ -1,0 +1,16 @@
+CLOSEDLOOP RESULT
+========================================================================
+fusion_power_MW                        163.56535406111624
+Q_plasma                               3.2713070812223246
+alpha_deposition_power_MW              21.824391090429728
+neutron_power_MW                       131.03815296941698
+radiation_loss_MW                      2.883036304476857
+transport_edge_loss_MW                 15.161093845514518
+tau_E_s                                6.417797826331695
+lawson_nTtau_keV_s_m3                  3.171135124885076e+21
+energy_balance_relative_residual       5.87566784886265e-16
+particle_balance_relative_residual     1.9038621324998714e-16
+authority                              VERIFIED_REDUCED_BURN_TRANSPORT_SCREEN
+experimental_validation                 False
+evidence_bundle                         results/baseline_dt
+evidence_hash_verification              PASS
