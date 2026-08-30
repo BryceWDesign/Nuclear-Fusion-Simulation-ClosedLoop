@@ -1,4 +1,5 @@
 import numpy as np
+
 from closedloop.equilibrium import manufactured_solution_error, solve_solovev_class_equilibrium
 
 

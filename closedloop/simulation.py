@@ -120,7 +120,6 @@ class ClosedLoopSimulator:
     def run(self) -> SimulationResult:
         cfg = self.config
         s = self.state
-        V = self.geometry.shell_volumes_m3
         dt = cfg.dt_s
 
         initial_D = self._integral(s.n_D_m3)
