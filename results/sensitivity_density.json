@@ -1,0 +1,9 @@
+{
+  "baseline_metric": 163.56535406111624,
+  "baseline_value": 9e+19,
+  "derivative_per_unit": 2.2344109451580134e-18,
+  "metric": "fusion_power_MW",
+  "normalized_elasticity": 1.2294595406132356,
+  "parameter": "core_fuel_density_m3",
+  "perturbation_fraction": 0.02
+}

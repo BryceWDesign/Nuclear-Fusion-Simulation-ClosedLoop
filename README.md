@@ -1,85 +1,207 @@
-HOW TO USE
-1. Clone the Repository
-   - NOTE: It is STRONGLY RECOMMENDED to run the simulation in a virtual environment
-    git clone https://github.com/johndominianni03/Nuclear-Fusion-Simulation.git
-    cd Nuclear-Fusion-Simulation
-2. Set up the Environment
-   - For Mac/Linux (Mac uses Apple Metal Performance Shaders for PyTorch)
-     python3.9 -m venv venv
-     source venv/bin/activate
-     pip install -r requirements.txt
-   - For Windows (Windows uses NVIDIA CUDA for PyTorch)
-     python -m venv venv
-     venv\Scripts\activate
-     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
-     pip install numba numpy pandas matplotlib scipy
-3. Run the simulation
-     python main.py
-4. Toggling between Numba JIT and PyTorch for running the simulation
-   Adjust the initial_thermal_particle_count in config.py
-   Adjust the GPU_PARTICLE_THRESHOLD variable in main.py
-      any initial particle count >= the threshold will trigger PyTorch
-      any initial particle count < the threshold will trigger Numba JIT
+# Nuclear-Fusion-Simulation-ClosedLoop
 
+**Verification-first reduced-order D-T tokamak burn, transport, and reactor-accounting fork.**
 
-IMPORTANT: One of the most beneficial features of the simulation is that the simulation's performance scales with the hardware of the user. For those with more powerful CPU's, the simulation will run and finish faster when toggling on Numba JIT as opposed to slower CPU's. For those with powerful GPU's, the simulation will run and finish far faster than those with slower GPU's. Furthermore, the PyTorch simulation run will almost universally perform better on Windows as opposed to Mac, as even with high-end Macs, the unified chip means that the calculations/simulation cannot be fully offloaded to the GPU, whereas on Windows PC's, the simulation is fully offloaded to the GPU as PC's have a discrete GPU -- meaning it is completely separate from the CPU due to the PC's non-unified architecture. For those using Macs, the PyTorch model runs far faster on models with a higher memory bus/throughput (measured in GB/s).
+Canonical fork: `https://github.com/BryceWDesign/Nuclear-Fusion-Simulation-ClosedLoop`
 
+This repository preserves the original educational particle/PIC simulator as legacy code and adds a separate `closedloop` engine whose fusion power, alpha source, neutron source, fuel consumption, plasma heating, losses, Q, and confinement metrics are derived from one causal state.
 
-Development Timeline & Physics Explanations
+> **Claim boundary:** this is not an experimentally validated tokamak predictor, not an ITER-class whole-device code, and not proof of ignition or net-electric fusion. It is a reproducible reduced-order research simulator with explicit numerical and claim gates.
 
-Phase I: Single Particle Kinematics & Boundaries
-Part 1: Grad-Shafranov Grid Initialization & Field Interpolation. The Grad-Shafranov equation maps the steady-state magnetic flux surfaces of the reactor. This is included to establish the foundational magnetic equilibrium, shaping the plasma into a realistic, stable "D-shape" torus rather than a simple, unphysical cylinder.
+## What changed
 
-Part 2: 3D Guiding Center / Boris Particle Pusher. Standard movement algorithms gradually add artificial energy to simulations, causing the virtual particles to artificially speed up and ruin the data. The Boris algorithm is implemented because it is a symplectic integrator; it strictly conserves energy and phase-space volume, allowing the simulation to remain perfectly stable and physically accurate across millions of computational steps.
+The original reactor path injected 3.5 MeV alpha particles on a schedule and later inferred fusion power from alpha power. ClosedLoop removes that causal shortcut in its new engine:
 
-Part 3: Numba JIT Acceleration & NumPy Vectorization. Python is inherently too slow for multi-particle physics. This optimization compiles the main loops into raw C code Just-In-Time (JIT), unlocking massive data parallelism on the CPU to handle complex particle tracking without bottlenecking the system.
+```text
+D + T state
+  -> Bosch-Hale <sigma v>
+  -> local D-T reaction rate
+  -> D/T fuel depletion
+  -> 3.5 MeV alpha birth + 14.1 MeV neutron source
+  -> fast-alpha slowing / escape reservoir
+  -> alpha deposition into electron / ion thermal energy
+  -> changed Te, Ti
+  -> changed D-T reactivity
+```
 
-Part 4: Maxwellian Thermal Tails & Divertor Wall-Loss Metrics. Plasmas do not operate at one uniform temperature. This module initializes the core plasma using a statistical Maxwell-Boltzmann distribution to account for high-energy "tails." This is vital because these rare, ultra-fast outlier particles are the ones most likely to overcome the Coulomb barrier and actually fuse.
+No scheduled alpha population is used by `closedloop`.
 
-Phase II: Plasma Collisionality & External Heating
+## Implemented, executable subsystems
 
-Part 5: Monte Carlo Coulomb Collisions (Pitch-Angle Scattering). In reality, charged particles constantly deflect off one another's electric fields. This module introduces randomized scattering, which is essential for modeling realistic confinement degradation as particles knock each other off their ideal orbits and into the reactor walls.
+- Separate radial D and T fuel populations
+- Maxwellian Bosch-Hale D-T reactivity with hard 0.2-100 keV authority boundary
+- Causal D-T fuel burn and helium production
+- Exact 17.6 MeV D-T energy branching into 3.5 MeV alpha and 14.1 MeV neutron channels
+- Fast-alpha number and energy reservoir with explicit slowing and orbit-loss timescales
+- Quasineutral electron-fluid charge accounting
+- Separate ion and electron thermal-energy states
+- Conservative finite-volume radial particle transport
+- Conservative reduced heat transport
+- Electron-ion energy exchange
+- Bremsstrahlung plus optional declared impurity cooling coefficient
+- Real thermal energy confinement time, `tau_E = W_thermal / P_thermal_loss`
+- Scientific plasma gain, `Q = P_fusion / P_external_plasma_heating`
+- Lawson `n T tau_E` diagnostic from the same simulated state
+- D, T, He/alpha particle-balance audit
+- Plasma + fast-alpha energy-balance audit
+- Reduced Grad-Shafranov solver with manufactured-solution verification
+- Reduced tokamak operating-envelope screens: Greenwald fraction, normalized beta, shaping-adjusted cylindrical edge-q
+- Vectorized 3-D Boris 3.5 MeV alpha vacuum-orbit screen in an analytic toroidal+poloidal field
+- Exact neutron-source and tritium-consumption ledger
+- Geometric tritium-breeding coverage constraint
+- Conditional plant power closure that refuses to invent missing recirculating loads
+- Time-step and spatial-resolution convergence campaign
+- Finite-difference parameter sensitivity screen
+- Seeded declared-input uncertainty campaign
+- Transparent constrained operating-point grid search
+- SHA-256 reproducible evidence bundles
+- Claim gates that permanently block experimental-validation claims
+- GitHub Actions on Python 3.11, 3.12, and 3.13
 
-Part 6: Magnetic Trapping & Banana Orbit Diagnostics. Because a tokamak's magnetic field decays over a 1/R distance, it creates a "magnetic mirror" effect. Particles on the outer edge of the torus get bounced back and forth by the tightening magnetic field, creating clearly defined "banana-shaped" trajectories. Modeling this is crucial for understanding how certain particles remain trapped instead of flowing smoothly around the ring.
+## Baseline result included in this ZIP
 
-Part 7: External Heating Models (Neutral Beam Injection - NBI). You cannot use magnets to push more heat into a magnetic cage. This module simulates shooting high-energy neutral atoms (which ignore magnetic fields) straight into the core. Once inside, they ionize, become trapped, and violently collide with the bulk plasma, successfully raising the core temperature to fusion-ready levels.
+`scenarios/baseline_dt.json` was executed and persisted under `results/baseline_dt/`.
 
-Part 8: Codebase Refactoring & Energy Conservation Audits. A structural milestone to clean the architecture, remove redundant code, and verify that no energy is being artificially created or destroyed during the complex heating phases.
+At the declared final time of 1.0 s, the current reduced model produced:
 
-Phase III: Self-Consistent Electromagnetic Fields (PIC)
+| Quantity | Result |
+|---|---:|
+| Fusion power | 163.565 MW |
+| Q plasma | 3.2713 |
+| Alpha deposition | 21.824 MW |
+| Neutron power | 131.038 MW |
+| Radiation loss | 2.883 MW |
+| Edge transport loss | 15.161 MW |
+| tau_E | 6.4178 s |
+| Lawson nTtau | 3.171e21 keV s m^-3 |
+| Energy-balance relative residual | 5.88e-16 |
+| Particle-balance relative residual | 1.90e-16 |
 
-Part 9: Charge Density Mapping (Particle-to-Grid Weighting). Rather than calculating the electric field between every single millions of particles (which would crash any computer), this module maps the discrete particles to a continuous spatial grid to efficiently locate where electrical charge is pooling up.
+**This is a reduced-model result, not a prediction that a physical tokamak with these inputs will achieve Q=3.27.**
 
-Part 10: Poisson’s Equation Solver (Electric Field Generation). Once the charge density grid is established, this solver translates those localized clusters of charge into a macroscopic electric field, mapping exactly how the plasma's own energy is warping the space inside the reactor.
+The alpha deposition fraction of total alpha+external heating is only about 30%, so the `alpha_self_heating_screen` remains **FAIL**. The code therefore does not promote this baseline to a burning-plasma or ignition claim.
 
-Part 11: Particle-in-Cell (PIC) Integration. This ties the entire loop together. Particles move and create charge -> the charge creates an electric field -> the electric field pushes back on the particles. This makes the simulation "self-consistent," meaning the plasma dynamically reacts to its own internal forces.
+### Numerical refinement result
 
-Part 12: Debye Shielding & Plasma Oscillations. Demonstrates the plasma's natural tendency to rearrange its electrons to instantly cancel out rogue electric charges, preventing internal electric fields from tearing the confinement apart.
+`results/baseline_convergence.json` compares the declared baseline, half time step, and doubled radial resolution. Fusion power changes by about 0.035% under time refinement and 0.855% from the temporally refined to spatially refined run. `tau_E` changes by about 7.65% under the spatial refinement, so confinement remains a materially weaker numerical result than fusion source power in this model.
 
-Phase IV: Magnetohydrodynamics (MHD) & Instabilities
+### Model-input uncertainty result
 
-Part 13: Fluid Approximations (Density & Pressure Profiles). While tracking individual particles is great for micro-physics, reactors are ultimately governed by macro-physics. This module models the bulk plasma as a continuous, compressible fluid to analyze global pressure gradients.
+`results/uncertainty_16.json` contains a seeded 16-sample campaign over declared density, ion-temperature, transport, and heating uncertainty. It reports a Q distribution of approximately 2.82 / 3.24 / 3.66 at p05 / median / p95. This is explicitly **model-input uncertainty**, not an experimental probability distribution.
 
-Part 14: The Vlasov Equation & Kinetic-Fluid Bridging. This acts as the translation layer between the micro-scale particle tracking and the macro-scale fluid dynamics, ensuring both models mathematically agree and do not contradict each other as the simulation evolves.
+### Alpha vacuum-orbit screen
 
-Part 15: Simulating Plasma Instabilities (e.g., Sawtooth / Tearing Modes). Plasmas are chaotic and actively fight confinement. This module introduces magnetohydrodynamic instabilities (such as magnetic islands) which act as "potholes" in the magnetic field, forcing the simulation to deal with realistic energy bleed-out and structural disruptions.
+`results/alpha_orbit_screen.json` contains a 256-marker, 1200-step Boris screen. The current analytic-field run retained all markers over 0.24 microseconds and showed maximum relative kinetic-energy drift below 8e-15. This is a short collisionless vacuum-orbit numerical screen, **not** evidence of reactor-scale alpha confinement.
 
-Part 16: Disruption Mitigation Diagnostics. When a plasma loses control, it can melt the physical reactor walls. This module acts as the emergency brake, simulating Shattered Pellet Injection (SPI) to rapidly introduce heavy materials, forcing a controlled thermal quench to safely radiate away the energy before a catastrophic impact.
+## Run it
 
-Phase V: Nuclear Reaction Dynamics
+Minimal ClosedLoop dependency:
 
-Part 17: D-T Fusion Cross-Section Algorithms. Particles naturally repel each other and shouldn't fuse. This module calculates the quantum tunneling probability of Deuterium and Tritium, mathematically allowing particles with enough speed to "cheat" the repulsion barrier and successfully fuse together.
+```bash
+python -m pip install -r requirements-closedloop.txt
+```
 
-Part 18: Reactivity Matrices & Volumetric Fusion Rates. This scales the individual quantum fusion probabilities up to a macroscopic level, calculating exactly how many megawatts of fusion power are being generated per cubic meter of the reactor in real-time.
+Run the baseline and write a hashed evidence bundle:
 
-Part 19: Alpha Particle Generation & Birth Trajectories. When D-T fusion occurs, it leaves behind a Helium nucleus (an Alpha particle). This module spawns these new particles dynamically at a massive 3.5 MeV of kinetic energy and tracks their extreme, wide-looping birth trajectories.
+```bash
+python -m closedloop run scenarios/baseline_dt.json --output results/my_run
+```
 
-Part 20: Alpha Heating (Self-Sustaining Ignition Metrics). This is the holy grail of nuclear fusion. This module tracks the exact threshold where the internal heat generated by the newly born Alpha particles completely overtakes the external NBI heating, officially achieving a self-sustaining "Burning Plasma" state.
+Run the numerical equilibrium verification:
 
-Phase VI: Advanced Reactor Engineering & HPC Polish
+```bash
+python -m closedloop equilibrium-verify
+```
 
-Part 21: Bremsstrahlung & Cyclotron Radiation Loss Models. Plasmas glow and emit massive amounts of X-rays and microwave radiation, bleeding off heat. This module continuously subtracts this radiated thermal energy, preventing the simulation from artificially overheating and enforcing realistic thermodynamic limits.
+Run convergence:
 
-Part 22: The Lawson Criterion & Q-Factor Calculation. The final scorecard for the reactor. It mathematically balances the heat generated against the energy lost, calculating both the Scientific Gain and the Engineering Gain. It strictly enforces realistic system inefficiencies (like thermal-to-electric conversion losses) to prove whether the reactor is truly generating net-positive power.
+```bash
+python -m closedloop convergence scenarios/baseline_dt.json
+```
 
-Part 23: Multi-Core Processing & Universal GPU Acceleration. Dynamically bypasses CPU limitations. By routing memory-heavy array workloads directly to PyTorch CUDA or Apple Metal Performance Shaders (Apple MPS), the engine completely saturates discrete GPU VRAM pipelines, dropping processing times from minutes down to seconds for massive particle counts.
+Run a parameter sensitivity:
+
+```bash
+python -m closedloop sensitivity scenarios/baseline_dt.json core_ion_temperature_keV --metric fusion_power_MW
+```
+
+Run the alpha orbit screen:
+
+```bash
+python -m closedloop alpha-orbit scenarios/baseline_dt.json
+```
+
+Run declared-input uncertainty:
+
+```bash
+python -m closedloop uncertainty scenarios/baseline_dt.json --samples 32 --seed 1234
+```
+
+Run the finite grid search:
+
+```bash
+python -m closedloop optimize scenarios/baseline_dt.json
+```
+
+Local deterministic gate:
+
+```bash
+python scripts/check_closedloop_green.py
+```
+
+## Evidence bundle
+
+A run with `--output` writes:
+
+```text
+config.json
+summary.json
+timeseries.json
+claim_gates.json
+environment.json
+SHA256SUMS
+```
+
+The manifest is verified immediately by the CLI. A result with a failed conservation or causal-Q gate returns a nonzero status.
+
+## Model authority
+
+ClosedLoop currently earns the authority label:
+
+`VERIFIED_REDUCED_BURN_TRANSPORT_SCREEN`
+
+when conservation and causal-Q gates pass.
+
+It does **not** earn any of the following:
+
+- experimental tokamak validation
+- predictive nonlinear MHD
+- gyrokinetic turbulence validation
+- production free-boundary equilibrium validation
+- 3-D neutron transport / TBR validation
+- blanket thermo-hydraulics qualification
+- divertor qualification
+- magnet qualification
+- net-electric reactor validation
+- ignition demonstration
+
+See `docs/closedloop/CLAIM_BOUNDARY.md` and `FINAL_STATUS.md`.
+
+## Legacy simulator
+
+The upstream educational simulator remains at repository root (`main.py`, `physics_engine.py`, `mhd_equilibrium.py`, etc.). Its original README is preserved as `docs/legacy/UPSTREAM_README.md`.
+
+ClosedLoop does not claim that its verification gates retroactively validate the legacy PIC/GPU path.
+
+## Licensing status
+
+The upstream repository did not include a software license when this fork was created. This fork therefore intentionally does **not** add a new blanket license over the inherited code. See `LICENSE_STATUS.md` before redistributing or relicensing this derivative repository.
+
+## Technical references
+
+- Bosch, H.-S. and Hale, G. M., *Improved formulas for fusion cross-sections and thermal reactivities*, Nuclear Fusion 32 (1992) 611.
+- Standard finite-volume conservation methods for radial diffusion.
+- Standard Boris magnetic particle pusher.
+- Grad-Shafranov equation with a constant-source Solovev-class reduced mode.
+
+The equations are implemented locally and regression-tested. External experimental validation is not bundled.

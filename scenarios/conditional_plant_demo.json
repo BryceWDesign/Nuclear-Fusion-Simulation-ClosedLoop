@@ -1,0 +1,16 @@
+{
+  "n_cells": 40,
+  "dt_s": 0.001,
+  "duration_s": 0.2,
+  "plant": {
+    "blanket_energy_multiplier": 1.05,
+    "gross_thermal_efficiency": 0.4,
+    "blanket_coverage_fraction": 0.85,
+    "global_tbr_target": 1.1,
+    "recirculating_components_MW": {
+      "plasma_heating": 50.0,
+      "magnets_and_cryogenics_assumed": 90.0,
+      "pumps_and_auxiliaries_assumed": 35.0
+    }
+  }
+}

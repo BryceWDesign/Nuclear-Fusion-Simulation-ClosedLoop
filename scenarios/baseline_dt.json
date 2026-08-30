@@ -1,0 +1,63 @@
+{
+  "n_cells": 48,
+  "dt_s": 0.001,
+  "duration_s": 1.0,
+  "random_seed": 7,
+  "geometry": {
+    "major_radius_m": 6.2,
+    "minor_radius_m": 2.0,
+    "toroidal_field_T": 5.3,
+    "plasma_current_MA": 15.0,
+    "elongation": 1.7
+  },
+  "initial": {
+    "core_total_fuel_density_m3": 9e+19,
+    "edge_total_fuel_density_m3": 1.5e+19,
+    "tritium_fraction": 0.5,
+    "core_ion_temperature_keV": 12.0,
+    "edge_ion_temperature_keV": 1.0,
+    "core_electron_temperature_keV": 10.0,
+    "edge_electron_temperature_keV": 0.8,
+    "profile_exponent": 1.5
+  },
+  "transport": {
+    "particle_diffusivity_D_m2_s": 0.05,
+    "particle_diffusivity_T_m2_s": 0.05,
+    "particle_diffusivity_He_m2_s": 0.03,
+    "ion_thermal_diffusivity_m2_s": 0.25,
+    "electron_thermal_diffusivity_m2_s": 0.35,
+    "edge_density_m3": 0.0,
+    "edge_ion_temperature_keV": 0.2,
+    "edge_electron_temperature_keV": 0.2
+  },
+  "alpha": {
+    "slowing_time_s": 0.35,
+    "orbit_loss_time_s": 2.0,
+    "electron_heating_fraction": 0.8
+  },
+  "heating": {
+    "external_heating_MW": 50.0,
+    "electron_fraction": 0.45,
+    "deposition_width_rho": 0.55
+  },
+  "radiation": {
+    "zeff": 1.4,
+    "impurity_fraction": 0.0,
+    "impurity_cooling_coefficient_W_m3": 0.0
+  },
+  "coupling": {
+    "electron_ion_equilibration_time_s": 0.8
+  },
+  "plant": {
+    "blanket_energy_multiplier": 1.0,
+    "gross_thermal_efficiency": 0.4,
+    "blanket_coverage_fraction": 0.85,
+    "global_tbr_target": 1.1,
+    "recirculating_components_MW": null
+  },
+  "verification": {
+    "max_energy_balance_relative_residual": 2e-06,
+    "max_particle_balance_relative_residual": 2e-10,
+    "max_fractional_fuel_burn_per_step": 0.02
+  }
+}

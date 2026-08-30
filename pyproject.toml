@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nuclear-fusion-simulation-closedloop"
+version = "1.0.0"
+description = "Verification-first reduced-order closed-loop D-T tokamak burn and transport simulator"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2.0,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.12"]
+
+[project.scripts]
+closedloop = "closedloop.cli:main"
+
+[tool.setuptools]
+packages = ["closedloop"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501"]

@@ -1,0 +1,11 @@
+{
+  "authority": "declared_model_input_uncertainty_not_experimental_probability",
+  "fusion_power_median_MW": 157.17969627019295,
+  "gate_pass_fraction": 1.0,
+  "q_above_one_fraction": 1.0,
+  "q_median": 3.240222389299763,
+  "q_p05": 2.8213398375383023,
+  "q_p95": 3.6639862030493715,
+  "samples": 16,
+  "seed": 1234
+}

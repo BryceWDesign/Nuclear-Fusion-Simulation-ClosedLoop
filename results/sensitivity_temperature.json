@@ -1,0 +1,9 @@
+{
+  "baseline_metric": 163.56535406111624,
+  "baseline_value": 12.0,
+  "derivative_per_unit": 10.401494815882195,
+  "metric": "fusion_power_MW",
+  "normalized_elasticity": 0.7631074349886351,
+  "parameter": "core_ion_temperature_keV",
+  "perturbation_fraction": 0.02
+}

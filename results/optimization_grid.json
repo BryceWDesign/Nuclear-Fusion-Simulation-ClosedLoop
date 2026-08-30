@@ -1,0 +1,14 @@
+{
+  "authority": "finite_declared_grid_search_not_global_reactor_optimization",
+  "best": {
+    "Q_plasma": 4.198707544383495,
+    "causal_gate_pass": true,
+    "combined_operating_envelope_pass": true,
+    "density_multiplier": 1.1,
+    "external_heating_MW": 40.0,
+    "fusion_power_MW": 167.94830177533981,
+    "ion_temperature_multiplier": 1.1
+  },
+  "evaluated": 27,
+  "feasible": 27
+}

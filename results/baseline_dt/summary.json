@@ -1,0 +1,111 @@
+{
+  "Q_plasma": 3.27130708122,
+  "alpha_birth_power_MW": 32.5272010917,
+  "alpha_deposition_power_MW": 21.8243910904,
+  "alpha_escape_power_MW": 3.81926844083,
+  "alpha_heating_fraction": 0.303857655583,
+  "authority": "VERIFIED_REDUCED_BURN_TRANSPORT_SCREEN",
+  "breeding_constraint": {
+    "authority": "exact_source_and_coverage_bound_not_neutron_transport",
+    "breeding_coverage_fraction": 0.85,
+    "global_tbr_target": 1.1,
+    "neutron_power_MW": 131.038152969,
+    "reaction_rate_per_s": 5.80053773659e+19,
+    "required_bred_tritium_kg_day": 0.0276097335346,
+    "required_local_tbr_if_uncovered_regions_breed_zero": 1.29411764706,
+    "tritium_burn_kg_day": 0.0250997577587
+  },
+  "claim_gates": {
+    "burning_plasma_screen_allowed": false,
+    "causal_fusion_result_allowed": true,
+    "experimental_validation_claim_allowed": false,
+    "gates": [
+      {
+        "detail": "relative residual=5.876e-16, limit=2.000e-06",
+        "name": "energy_conservation",
+        "passed": true
+      },
+      {
+        "detail": "relative residual=1.904e-16, limit=2.000e-10",
+        "name": "particle_conservation",
+        "passed": true
+      },
+      {
+        "detail": "Q uses D-T reaction power divided by declared external plasma heating",
+        "name": "q_causal_chain",
+        "passed": true
+      },
+      {
+        "detail": "alpha heating fraction=0.3039",
+        "name": "alpha_self_heating_screen",
+        "passed": false
+      },
+      {
+        "detail": "net-electric is only emitted when all declared recirculating loads are supplied",
+        "name": "plant_closure",
+        "passed": false
+      },
+      {
+        "detail": "no experimental tokamak validation is bundled with this repository",
+        "name": "experimental_validation",
+        "passed": false
+      }
+    ],
+    "highest_authority": "VERIFIED_REDUCED_BURN_TRANSPORT_SCREEN",
+    "net_electric_statement_allowed": false
+  },
+  "cumulative_DT_reactions": 3.90862015269e+19,
+  "cumulative_alpha_birth_energy_MJ": 21.9180495794,
+  "cumulative_alpha_escape_MJ": 2.12864449944,
+  "cumulative_external_energy_MJ": 50.0,
+  "cumulative_radiation_loss_MJ": 2.65172561626,
+  "cumulative_transport_net_out_MJ": 11.8169575524,
+  "deuterium_edge_net_out": 1.27084319143e+21,
+  "duration_s": 1.0,
+  "energy_balance_error_J": 5.21540641785e-08,
+  "energy_balance_relative_residual": 5.87566784886e-16,
+  "experimental_validation": false,
+  "external_heating_MW": 50.0,
+  "fast_alpha_energy_MJ": 7.625722226,
+  "fusion_power_MW": 163.565354061,
+  "helium_ash_inventory": 2.16826786002e+19,
+  "helium_edge_net_out": 8674803180510000.0,
+  "lawson_nTtau_keV_s_m3": 3.17113512489e+21,
+  "model_boundary": "1.5D circular-torus reduced transport + Maxwellian Bosch-Hale D-T burn; not predictive tokamak validation",
+  "neutron_power_MW": 131.038152969,
+  "operating_envelope": {
+    "authority": "reduced_operating_envelope_screen_not_mhd_stability_proof",
+    "betaN_screen_pass": true,
+    "beta_fraction": 0.0141103381727,
+    "beta_normalized": 0.997130564204,
+    "combined_screen_pass": true,
+    "cylindrical_edge_q": 2.21688172043,
+    "greenwald_density_limit_m3": 1.19366207319e+20,
+    "greenwald_fraction": 0.33339036591,
+    "greenwald_screen_pass": true,
+    "q_screen_pass": true,
+    "volume_average_pressure_Pa": 157706.394087
+  },
+  "particle_balance_relative_residual": 1.9038621325e-16,
+  "plant_closure": {
+    "authority": "algebraic_conditional_plant_closure_not_integrated_engineering_prediction",
+    "blanket_energy_multiplier": 1.0,
+    "closure_complete": false,
+    "fusion_power_MW": 163.565354061,
+    "gross_electric_MW": 65.4261416244,
+    "gross_thermal_efficiency": 0.4,
+    "net_electric_MW": null,
+    "recirculating_power_MW": null,
+    "thermal_power_MW": 163.565354061
+  },
+  "plasma_volume_m3": 489.532378294,
+  "radiation_loss_MW": 2.88303630448,
+  "steps": 1000,
+  "tau_E_s": 6.41779782633,
+  "time_s": 1.0,
+  "transport_edge_loss_MW": 15.1610938455,
+  "tritium_edge_net_out": 1.27084319143e+21,
+  "volume_avg_Te_keV": 10.3652575527,
+  "volume_avg_Ti_keV": 10.4945631211,
+  "volume_avg_ne_m3": 3.97955435354e+19
+}
